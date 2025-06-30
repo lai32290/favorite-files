@@ -58,8 +58,8 @@
         "title": "Remove Favorite"
       },
       {
-        "        command": "favorite-files.addFileToGroup",
-        "title": "Add File to Group",
+        "command": "favorite-files.addActiveFileToGroup",
+        "title": "Add Active File to Group",
         "icon": "$(add)"
       }
     ],
@@ -84,7 +84,7 @@
       ],
       "view/item/context": [
         {
-          "command": "favorite-files.addFileToGroup",
+          "command": "favorite-files.addActiveFileToGroup",
           "when": "view == favorite-files-view && viewItem == group",
           "group": "inline"
         },

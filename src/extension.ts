@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
     }),
-    vscode.commands.registerCommand('favorite-files.addFileToGroup', async (item: FavoriteItem) => {
+    vscode.commands.registerCommand('favorite-files.addActiveFileToGroup', async (item: FavoriteItem) => {
       const activeEditor = vscode.window.activeTextEditor;
       if (activeEditor) {
         const favorites = context.workspaceState.get<Favorites>('favorites', {});
