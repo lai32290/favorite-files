@@ -18,6 +18,40 @@ function migrateOldFavorites(workspaceState: vscode.Memento): void {
   workspaceState.update('favorites', newFavorites);
 }
 
+function validateAndMigrateImportData(data: any): { favorites: Favorites; bookmarks: Bookmarks } {
+  const favorites: Favorites = {};
+  const bookmarks: Bookmarks = data.bookmarks || {};
+
+  // Handle old format where favorites was just an array of strings
+  if (data.favorites && Array.isArray(data.favorites)) {
+    // Convert old array format to new structure
+    favorites['Imported Group'] = {
+      files: data.favorites,
+      bookmarks: []
+    };
+  } else if (data.favorites && typeof data.favorites === 'object') {
+    // Handle new format or old format with groups
+    Object.keys(data.favorites).forEach(group => {
+      const groupData = data.favorites[group];
+      if (Array.isArray(groupData)) {
+        // Old format: group was just an array of files
+        favorites[group] = {
+          files: groupData,
+          bookmarks: []
+        };
+      } else if (groupData && typeof groupData === 'object') {
+        // New format: group has files and bookmarks
+        favorites[group] = {
+          files: groupData.files || [],
+          bookmarks: groupData.bookmarks || []
+        };
+      }
+    });
+  }
+
+  return { favorites, bookmarks };
+}
+
 export function activate(context: vscode.ExtensionContext) {
   // Migrate old favorites structure if needed
   const oldFavorites = context.workspaceState.get<{ [group: string]: string[] }>('favorites', {});
@@ -239,6 +273,132 @@ export function activate(context: vscode.ExtensionContext) {
           context.workspaceState.update('favorites', favorites);
           favoritesProvider.refresh();
           vscode.window.showInformationMessage('All bookmarks cleared for this group');
+        }
+      }
+    }),
+    // Custom command to open bookmarks with proper focus
+    vscode.commands.registerCommand('favorite-files.openBookmark', async (filePath: string, line: number) => {
+      try {
+        const uri = vscode.Uri.file(filePath);
+        const document = await vscode.workspace.openTextDocument(uri);
+        const editor = await vscode.window.showTextDocument(document, { 
+          viewColumn: vscode.ViewColumn.Active,
+          selection: new vscode.Range(line - 1, 0, line - 1, 0)
+        });
+        
+        // Ensure the line is visible and focused
+        editor.revealRange(new vscode.Range(line - 1, 0, line - 1, 0), vscode.TextEditorRevealType.InCenter);
+        editor.selection = new vscode.Selection(line - 1, 0, line - 1, 0);
+      } catch (error) {
+        vscode.window.showErrorMessage(`Failed to open bookmark: ${error}`);
+      }
+    }),
+    // Export and Import commands
+    vscode.commands.registerCommand('favorite-files.exportData', async () => {
+      const favorites = context.workspaceState.get<Favorites>('favorites', {});
+      const bookmarks = context.workspaceState.get<Bookmarks>('bookmarks', {});
+      
+      // Calculate statistics
+      const totalGroups = Object.keys(favorites).length;
+      const totalFiles = Object.values(favorites).reduce((sum, group) => sum + group.files.length, 0);
+      const totalGroupBookmarks = Object.values(favorites).reduce((sum, group) => sum + group.bookmarks.length, 0);
+      const totalGlobalBookmarks = Object.values(bookmarks).reduce((sum, fileBookmarks) => sum + fileBookmarks.length, 0);
+      
+      const exportData = {
+        favorites,
+        bookmarks,
+        exportDate: new Date().toISOString(),
+        version: '1.0',
+        statistics: {
+          groups: totalGroups,
+          files: totalFiles,
+          groupBookmarks: totalGroupBookmarks,
+          globalBookmarks: totalGlobalBookmarks,
+          totalBookmarks: totalGroupBookmarks + totalGlobalBookmarks
+        }
+      };
+
+      const uri = await vscode.window.showSaveDialog({
+        title: 'Export Favorites and Bookmarks',
+        filters: {
+          'JSON Files': ['json']
+        },
+        defaultUri: vscode.Uri.file('favorites-export.json')
+      });
+
+      if (uri) {
+        try {
+          const jsonContent = JSON.stringify(exportData, null, 2);
+          await vscode.workspace.fs.writeFile(uri, Buffer.from(jsonContent, 'utf8'));
+          vscode.window.showInformationMessage(
+            `Export successful! Groups: ${totalGroups}, Files: ${totalFiles}, Bookmarks: ${totalGroupBookmarks + totalGlobalBookmarks}`
+          );
+        } catch (error) {
+          vscode.window.showErrorMessage(`Failed to export data: ${error}`);
+        }
+      }
+    }),
+    vscode.commands.registerCommand('favorite-files.importData', async () => {
+      const uris = await vscode.window.showOpenDialog({
+        title: 'Import Favorites and Bookmarks',
+        filters: {
+          'JSON Files': ['json']
+        },
+        canSelectMany: false
+      });
+
+      if (uris && uris.length > 0) {
+        try {
+          const fileContent = await vscode.workspace.fs.readFile(uris[0]);
+          const importData = JSON.parse(fileContent.toString());
+          
+          // Validate the import data structure
+          if (!importData.favorites) {
+            throw new Error('Invalid file format. Expected favorites data.');
+          }
+
+          // Create automatic backup before import
+          const currentFavorites = context.workspaceState.get<Favorites>('favorites', {});
+          const currentBookmarks = context.workspaceState.get<Bookmarks>('bookmarks', {});
+          
+          if (Object.keys(currentFavorites).length > 0 || Object.keys(currentBookmarks).length > 0) {
+            const backupData = {
+              favorites: currentFavorites,
+              bookmarks: currentBookmarks,
+              backupDate: new Date().toISOString(),
+              version: '1.0'
+            };
+            
+            const backupUri = vscode.Uri.file(`favorites-backup-${Date.now()}.json`);
+            const backupContent = JSON.stringify(backupData, null, 2);
+            await vscode.workspace.fs.writeFile(backupUri, Buffer.from(backupContent, 'utf8'));
+          }
+
+          // Show confirmation dialog
+          const result = await vscode.window.showWarningMessage(
+            'This will replace all existing favorites and bookmarks. A backup has been created. Are you sure?',
+            { modal: true },
+            'Yes', 'No'
+          );
+
+          if (result === 'Yes') {
+            const { favorites, bookmarks } = validateAndMigrateImportData(importData);
+            context.workspaceState.update('favorites', favorites);
+            context.workspaceState.update('bookmarks', bookmarks);
+            favoritesProvider.refresh();
+            
+            // Calculate and show import statistics
+            const totalGroups = Object.keys(favorites).length;
+            const totalFiles = Object.values(favorites).reduce((sum, group) => sum + group.files.length, 0);
+            const totalGroupBookmarks = Object.values(favorites).reduce((sum, group) => sum + group.bookmarks.length, 0);
+            const totalGlobalBookmarks = Object.values(bookmarks).reduce((sum, fileBookmarks) => sum + fileBookmarks.length, 0);
+            
+            vscode.window.showInformationMessage(
+              `Import successful! Groups: ${totalGroups}, Files: ${totalFiles}, Bookmarks: ${totalGroupBookmarks + totalGlobalBookmarks}`
+            );
+          }
+        } catch (error) {
+          vscode.window.showErrorMessage(`Failed to import data: ${error}`);
         }
       }
     })

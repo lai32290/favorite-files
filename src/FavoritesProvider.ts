@@ -100,9 +100,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteItem> 
       const description = bookmark.description || `Line ${bookmark.line}`;
       const treeItem = new FavoriteItem(description, vscode.TreeItemCollapsibleState.None, 'bookmark');
       treeItem.command = {
-        command: 'vscode.open',
+        command: 'favorite-files.openBookmark',
         title: 'Open File at Bookmark',
-        arguments: [uri, { selection: new vscode.Range(bookmark.line - 1, 0, bookmark.line - 1, 0) }],
+        arguments: [bookmark.filePath, bookmark.line],
       };
       treeItem.resourceUri = uri;
       treeItem.tooltip = `${vscode.workspace.asRelativePath(uri)}:${bookmark.line}`;
@@ -121,9 +121,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteItem> 
       const description = bookmark.description || `Line ${bookmark.line}`;
       const treeItem = new FavoriteItem(description, vscode.TreeItemCollapsibleState.None, 'bookmark');
       treeItem.command = {
-        command: 'vscode.open',
+        command: 'favorite-files.openBookmark',
         title: 'Open File at Bookmark',
-        arguments: [uri, { selection: new vscode.Range(bookmark.line - 1, 0, bookmark.line - 1, 0) }],
+        arguments: [bookmark.filePath, bookmark.line],
       };
       treeItem.resourceUri = uri;
       treeItem.tooltip = `${vscode.workspace.asRelativePath(uri)}:${bookmark.line}`;

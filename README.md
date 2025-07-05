@@ -12,6 +12,7 @@ This extension allows you to favorite files and groups of files in VS Code. You 
 *   Quickly open files at bookmarked positions
 *   Organize bookmarks by file
 *   Add descriptions to bookmarks for better organization
+* Export and import favorite files and bookmarks to JSON file
 
 ## Usage
 
@@ -39,3 +40,10 @@ This extension allows you to favorite files and groups of files in VS Code. You 
 - Right-click on the "Bookmarks" group to clear all bookmarks
 - Right-click on a group's "Bookmarks" section to clear all bookmarks for that group
 - Click on a bookmark to open the file at that specific line
+
+### Export and Import
+- Click the export icon in the Favorites sidebar to export all favorites and bookmarks to a JSON file
+- Click the import icon in the Favorites sidebar to import favorites and bookmarks from a JSON file
+- Export includes statistics about groups, files, and bookmarks
+- Import automatically creates a backup before replacing existing data
+- Import supports both old and new data formats with automatic migration

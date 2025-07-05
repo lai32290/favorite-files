@@ -87,6 +87,20 @@
       {
         "command": "favorite-files.clearGroupBookmarks",
         "title": "Clear Group Bookmarks"
+      },
+      {
+        "command": "favorite-files.openBookmark",
+        "title": "Open Bookmark"
+      },
+      {
+        "command": "favorite-files.exportData",
+        "title": "Export Favorites and Bookmarks",
+        "icon": "$(export)"
+      },
+      {
+        "command": "favorite-files.importData",
+        "title": "Import Favorites and Bookmarks",
+        "icon": "$(download)"
       }
     ],
     "menus": {
@@ -98,6 +112,16 @@
         },
         {
           "command": "favorite-files.createGroup",
+          "when": "view == favorite-files-view",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.exportData",
+          "when": "view == favorite-files-view",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.importData",
           "when": "view == favorite-files-view",
           "group": "navigation"
         }
