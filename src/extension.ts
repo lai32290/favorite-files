@@ -136,6 +136,24 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
     }),
+    vscode.commands.registerCommand('favorite-files.renameFavorite', async (item: FavoriteItem) => {
+      if (item.contextValue === 'file' && item.resourceUri) {
+        // Prompt for new label (alias)
+        const newLabel = await vscode.window.showInputBox({
+          prompt: 'Enter new name for this favorite (alias only, does not rename the file on disk)',
+          value: item.label
+        });
+        if (!newLabel || newLabel === item.label) {
+          return;
+        }
+        // Store alias in workspaceState under a new key 'favoriteAliases'
+        const favoriteAliases = context.workspaceState.get<{ [filePath: string]: string }>('favoriteAliases', {});
+        favoriteAliases[item.resourceUri.fsPath] = newLabel;
+        await context.workspaceState.update('favoriteAliases', favoriteAliases);
+        favoritesProvider.refresh();
+        vscode.window.showInformationMessage('Favorite renamed (alias updated)');
+      }
+    }),
     // Bookmark commands
     vscode.commands.registerCommand('favorite-files.addBookmark', async () => {
       const activeEditor = vscode.window.activeTextEditor;

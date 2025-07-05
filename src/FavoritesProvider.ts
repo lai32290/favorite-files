@@ -68,9 +68,12 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteItem> 
     const items: FavoriteItem[] = [];
 
     // Add files
+    const favoriteAliases = this.workspaceState.get<{ [filePath: string]: string }>('favoriteAliases', {});
     groupData.files.forEach((filePath: string) => {
       const uri = vscode.Uri.file(filePath);
-      const treeItem = new FavoriteItem(vscode.workspace.asRelativePath(uri), vscode.TreeItemCollapsibleState.None, 'file');
+      const alias = favoriteAliases[filePath];
+      const label = alias || vscode.workspace.asRelativePath(uri);
+      const treeItem = new FavoriteItem(label, vscode.TreeItemCollapsibleState.None, 'file');
       treeItem.command = {
         command: 'vscode.open',
         title: 'Open File',

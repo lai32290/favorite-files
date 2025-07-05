@@ -62,6 +62,11 @@
         "icon": "$(trash)"
       },
       {
+        "command": "favorite-files.renameFavorite",
+        "title": "Rename Favorite",
+        "icon": "$(edit)"
+      },
+      {
         "command": "favorite-files.addActiveFileToGroup",
         "title": "Add Active File to Group",
         "icon": "$(add)"
@@ -172,9 +177,14 @@
           "group": "navigation"
         },
         {
+          "command": "favorite-files.renameFavorite",
+          "when": "view == favorite-files-view && viewItem == file",
+          "group": "navigation@1"
+        },
+        {
           "command": "favorite-files.removeFavorite",
           "when": "view == favorite-files-view && viewItem == file",
-          "group": "navigation"
+          "group": "navigation@2"
         },
         {
           "command": "favorite-files.removeBookmark",
