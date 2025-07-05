@@ -36,6 +36,7 @@ This is a VSCode extension, it allows you to favorite files and groups of files 
 
 ### Managing Bookmarks
 - Right-click on a bookmark to remove it
+- Right-click on a bookmark to rename it
 - Right-click on a file with bookmarks to clear all bookmarks for that file
 - Right-click on the "Bookmarks" group to clear all bookmarks
 - Right-click on a group's "Bookmarks" section to clear all bookmarks for that group

@@ -243,6 +243,43 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
     }),
+    vscode.commands.registerCommand('favorite-files.renameBookmark', async (item: FavoriteItem) => {
+      if (item.contextValue === 'bookmark' && item.filePath) {
+        // Prompt for new description
+        const newDescription = await vscode.window.showInputBox({
+          prompt: 'Enter new bookmark description',
+          value: item.label
+        });
+        if (!newDescription) {
+          return;
+        }
+        if (item.groupName) {
+          // Group bookmark
+          const favorites = context.workspaceState.get<Favorites>('favorites', {});
+          const groupData = favorites[item.groupName];
+          if (groupData) {
+            const bookmark = groupData.bookmarks.find(b => b.filePath === item.filePath && (b.description || `Line ${b.line}`) === item.label);
+            if (bookmark) {
+              bookmark.description = newDescription;
+              context.workspaceState.update('favorites', favorites);
+              favoritesProvider.refresh();
+              vscode.window.showInformationMessage('Bookmark renamed');
+            }
+          }
+        } else {
+          // Global bookmark
+          const bookmarks = context.workspaceState.get<Bookmarks>('bookmarks', {});
+          const fileBookmarks = bookmarks[item.filePath] || [];
+          const bookmark = fileBookmarks.find(b => (b.description || `Line ${b.line}`) === item.label);
+          if (bookmark) {
+            bookmark.description = newDescription;
+            context.workspaceState.update('bookmarks', bookmarks);
+            favoritesProvider.refresh();
+            vscode.window.showInformationMessage('Bookmark renamed');
+          }
+        }
+      }
+    }),
     vscode.commands.registerCommand('favorite-files.clearBookmarks', async (item: FavoriteItem) => {
       if (item.contextValue === 'bookmark-file' && item.filePath) {
         const bookmarks = context.workspaceState.get<Bookmarks>('bookmarks', {});

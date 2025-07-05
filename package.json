@@ -33,7 +33,8 @@
     "commands": [
       {
         "command": "favorite-files.add",
-        "title": "Add to Favorites"
+        "title": "Add to Favorites",
+        "icon": "$(add)"
       },
       {
         "command": "favorite-files.refresh",
@@ -47,15 +48,18 @@
       },
       {
         "command": "favorite-files.renameGroup",
-        "title": "Rename Group"
+        "title": "Rename Group",
+        "icon": "$(edit)"
       },
       {
         "command": "favorite-files.deleteGroup",
-        "title": "Delete Group"
+        "title": "Delete Group",
+        "icon": "$(trash)"
       },
       {
         "command": "favorite-files.removeFavorite",
-        "title": "Remove Favorite"
+        "title": "Remove Favorite",
+        "icon": "$(trash)"
       },
       {
         "command": "favorite-files.addActiveFileToGroup",
@@ -69,15 +73,23 @@
       },
       {
         "command": "favorite-files.removeBookmark",
-        "title": "Remove Bookmark"
+        "title": "Remove Bookmark",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "favorite-files.renameBookmark",
+        "title": "Rename Bookmark",
+        "icon": "$(edit)"
       },
       {
         "command": "favorite-files.clearBookmarks",
-        "title": "Clear Bookmarks for File"
+        "title": "Clear Bookmarks for File",
+        "icon": "$(trash)"
       },
       {
         "command": "favorite-files.clearAllBookmarks",
-        "title": "Clear All Bookmarks"
+        "title": "Clear All Bookmarks",
+        "icon": "$(trash)"
       },
       {
         "command": "favorite-files.addBookmarkToGroup",
@@ -86,11 +98,13 @@
       },
       {
         "command": "favorite-files.clearGroupBookmarks",
-        "title": "Clear Group Bookmarks"
+        "title": "Clear Group Bookmarks",
+        "icon": "$(trash)"
       },
       {
         "command": "favorite-files.openBookmark",
-        "title": "Open Bookmark"
+        "title": "Open Bookmark",
+        "icon": "$(go-to-file)"
       },
       {
         "command": "favorite-files.showSettings",
@@ -99,11 +113,13 @@
       },
       {
         "command": "favorite-files.exportData",
-        "title": "Export Favorites and Bookmarks"
+        "title": "Export Favorites and Bookmarks",
+        "icon": "$(cloud-upload)"
       },
       {
         "command": "favorite-files.importData",
-        "title": "Import Favorites and Bookmarks"
+        "title": "Import Favorites and Bookmarks",
+        "icon": "$(cloud-download)"
       }
     ],
     "menus": {
@@ -162,6 +178,11 @@
         },
         {
           "command": "favorite-files.removeBookmark",
+          "when": "view == favorite-files-view && viewItem == bookmark",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.renameBookmark",
           "when": "view == favorite-files-view && viewItem == bookmark",
           "group": "navigation"
         },
