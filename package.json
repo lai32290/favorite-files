@@ -2,7 +2,7 @@
   "name": "favorite-files",
   "displayName": "Favorite Files",
   "description": "Favorite files and folders",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.101.0"
   },
