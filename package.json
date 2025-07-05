@@ -61,6 +61,32 @@
         "command": "favorite-files.addActiveFileToGroup",
         "title": "Add Active File to Group",
         "icon": "$(add)"
+      },
+      {
+        "command": "favorite-files.addBookmark",
+        "title": "Add Bookmark",
+        "icon": "$(bookmark)"
+      },
+      {
+        "command": "favorite-files.removeBookmark",
+        "title": "Remove Bookmark"
+      },
+      {
+        "command": "favorite-files.clearBookmarks",
+        "title": "Clear Bookmarks for File"
+      },
+      {
+        "command": "favorite-files.clearAllBookmarks",
+        "title": "Clear All Bookmarks"
+      },
+      {
+        "command": "favorite-files.addBookmarkToGroup",
+        "title": "Add Bookmark to Group",
+        "icon": "$(bookmark)"
+      },
+      {
+        "command": "favorite-files.clearGroupBookmarks",
+        "title": "Clear Group Bookmarks"
       }
     ],
     "menus": {
@@ -80,11 +106,20 @@
         {
           "command": "favorite-files.add",
           "group": "navigation"
+        },
+        {
+          "command": "favorite-files.addBookmark",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "favorite-files.addActiveFileToGroup",
+          "when": "view == favorite-files-view && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "favorite-files.addBookmarkToGroup",
           "when": "view == favorite-files-view && viewItem == group",
           "group": "inline"
         },
@@ -101,6 +136,26 @@
         {
           "command": "favorite-files.removeFavorite",
           "when": "view == favorite-files-view && viewItem == file",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.removeBookmark",
+          "when": "view == favorite-files-view && viewItem == bookmark",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.clearBookmarks",
+          "when": "view == favorite-files-view && viewItem == bookmark-file",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.clearAllBookmarks",
+          "when": "view == favorite-files-view && viewItem == bookmarks-group",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.clearGroupBookmarks",
+          "when": "view == favorite-files-view && viewItem == group-bookmarks",
           "group": "navigation"
         }
       ]
