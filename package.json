@@ -99,17 +99,20 @@
       },
       {
         "command": "favorite-files.exportData",
-        "title": "Export Favorites and Bookmarks",
-        "icon": "$(export)"
+        "title": "Export Favorites and Bookmarks"
       },
       {
         "command": "favorite-files.importData",
-        "title": "Import Favorites and Bookmarks",
-        "icon": "$(download)"
+        "title": "Import Favorites and Bookmarks"
       }
     ],
     "menus": {
       "view/title": [
+         {
+          "command": "favorite-files.showSettings",
+          "when": "view == favorite-files-view",
+          "group": "navigation"
+        },
         {
           "command": "favorite-files.refresh",
           "when": "view == favorite-files-view",
@@ -117,11 +120,6 @@
         },
         {
           "command": "favorite-files.createGroup",
-          "when": "view == favorite-files-view",
-          "group": "navigation"
-        },
-        {
-          "command": "favorite-files.showSettings",
           "when": "view == favorite-files-view",
           "group": "navigation"
         }

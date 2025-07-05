@@ -296,8 +296,8 @@ export function activate(context: vscode.ExtensionContext) {
     // Settings menu command
     vscode.commands.registerCommand('favorite-files.showSettings', async () => {
       const options = [
-        { label: '$(export) Export Favorites and Bookmarks', value: 'export' },
-        { label: '$(download) Import Favorites and Bookmarks', value: 'import' }
+        { label: 'Export Favorites and Bookmarks', value: 'export' },
+        { label: 'Import Favorites and Bookmarks', value: 'import' }
       ];
       
       const selected = await vscode.window.showQuickPick(options, {
@@ -388,8 +388,17 @@ export function activate(context: vscode.ExtensionContext) {
               backupDate: new Date().toISOString(),
               version: '1.0'
             };
-            
-            const backupUri = vscode.Uri.file(`favorites-backup-${Date.now()}.json`);
+
+            // Prefer workspace folder, fallback to home directory
+            let backupPath: string;
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+            if (workspaceFolders && workspaceFolders.length > 0) {
+              backupPath = vscode.Uri.joinPath(workspaceFolders[0].uri, `favorites-backup-${Date.now()}.json`).fsPath;
+            } else {
+              const homeDir = process.env.HOME || process.env.USERPROFILE || '.';
+              backupPath = require('path').join(homeDir, `favorites-backup-${Date.now()}.json`);
+            }
+            const backupUri = vscode.Uri.file(backupPath);
             const backupContent = JSON.stringify(backupData, null, 2);
             await vscode.workspace.fs.writeFile(backupUri, Buffer.from(backupContent, 'utf8'));
           }

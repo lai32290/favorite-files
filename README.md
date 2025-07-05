@@ -1,6 +1,6 @@
 # Favorite Files
 
-This extension allows you to favorite files and groups of files in VS Code. You can easily access your favorite files from the sidebar.
+This is a VSCode extension, it allows you to favorite files and groups of files in VS Code. You can easily access your favorite files from the sidebar.
 
 ## Features
 
