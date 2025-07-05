@@ -93,6 +93,11 @@
         "title": "Open Bookmark"
       },
       {
+        "command": "favorite-files.showSettings",
+        "title": "Favorites Settings",
+        "icon": "$(gear)"
+      },
+      {
         "command": "favorite-files.exportData",
         "title": "Export Favorites and Bookmarks",
         "icon": "$(export)"
@@ -116,12 +121,7 @@
           "group": "navigation"
         },
         {
-          "command": "favorite-files.exportData",
-          "when": "view == favorite-files-view",
-          "group": "navigation"
-        },
-        {
-          "command": "favorite-files.importData",
+          "command": "favorite-files.showSettings",
           "when": "view == favorite-files-view",
           "group": "navigation"
         }

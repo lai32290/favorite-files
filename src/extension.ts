@@ -293,6 +293,26 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showErrorMessage(`Failed to open bookmark: ${error}`);
       }
     }),
+    // Settings menu command
+    vscode.commands.registerCommand('favorite-files.showSettings', async () => {
+      const options = [
+        { label: '$(export) Export Favorites and Bookmarks', value: 'export' },
+        { label: '$(download) Import Favorites and Bookmarks', value: 'import' }
+      ];
+      
+      const selected = await vscode.window.showQuickPick(options, {
+        placeHolder: 'Select an option',
+        title: 'Favorites Settings'
+      });
+      
+      if (selected) {
+        if (selected.value === 'export') {
+          vscode.commands.executeCommand('favorite-files.exportData');
+        } else if (selected.value === 'import') {
+          vscode.commands.executeCommand('favorite-files.importData');
+        }
+      }
+    }),
     // Export and Import commands
     vscode.commands.registerCommand('favorite-files.exportData', async () => {
       const favorites = context.workspaceState.get<Favorites>('favorites', {});
