@@ -58,7 +58,7 @@
       },
       {
         "command": "favorite-files.removeFavorite",
-        "title": "Remove Favorite",
+        "title": "Delete Favorite",
         "icon": "$(trash)"
       },
       {
@@ -73,7 +73,7 @@
       },
       {
         "command": "favorite-files.removeBookmark",
-        "title": "Remove Bookmark",
+        "title": "Delete Bookmark",
         "icon": "$(trash)"
       },
       {
