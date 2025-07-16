@@ -39,7 +39,7 @@ Favorite Files is a powerful VS Code extension that lets you organize, access, a
 4. The bookmark appears under the group's "Bookmarks" section
 
 ### Managing Favorites and Bookmarks
-- Right-click a favorite to rename (set alias) or remove it
+- Right-click a favorite to rename (set alias), copy its relative path, or remove it
 - Right-click a bookmark to rename or remove it
 - Right-click a file with bookmarks to clear all bookmarks for that file
 - Right-click the "Bookmarks" group to clear all bookmarks
@@ -64,6 +64,7 @@ All commands are available via the command palette (`Cmd+Shift+P`) or context me
 - `Delete Group`
 - `Delete Favorite`
 - `Rename Favorite`
+- `Copy Relative Path`
 - `Add Active File to Group`
 - `Add Bookmark`
 - `Remove Bookmark`

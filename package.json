@@ -2,14 +2,36 @@
   "name": "favorite-files",
   "displayName": "Favorite Files",
   "description": "Favorite files and folders",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.101.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:favorite-files-view",
+    "onCommand:favorite-files.add",
+    "onCommand:favorite-files.refresh",
+    "onCommand:favorite-files.createGroup",
+    "onCommand:favorite-files.renameGroup",
+    "onCommand:favorite-files.deleteGroup",
+    "onCommand:favorite-files.removeFavorite",
+    "onCommand:favorite-files.renameFavorite",
+    "onCommand:favorite-files.copyRelativePath",
+    "onCommand:favorite-files.addActiveFileToGroup",
+    "onCommand:favorite-files.addBookmark",
+    "onCommand:favorite-files.removeBookmark",
+    "onCommand:favorite-files.renameBookmark",
+    "onCommand:favorite-files.clearBookmarks",
+    "onCommand:favorite-files.clearAllBookmarks",
+    "onCommand:favorite-files.addBookmarkToGroup",
+    "onCommand:favorite-files.clearGroupBookmarks",
+    "onCommand:favorite-files.openBookmark",
+    "onCommand:favorite-files.showSettings",
+    "onCommand:favorite-files.exportData",
+    "onCommand:favorite-files.importData"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -125,6 +147,11 @@
         "command": "favorite-files.importData",
         "title": "Import Favorites and Bookmarks",
         "icon": "$(cloud-download)"
+      },
+      {
+        "command": "favorite-files.copyRelativePath",
+        "title": "Copy Relative Path",
+        "icon": "$(copy)"
       }
     ],
     "menus": {
@@ -178,6 +205,11 @@
         },
         {
           "command": "favorite-files.renameFavorite",
+          "when": "view == favorite-files-view && viewItem == file",
+          "group": "navigation@1"
+        },
+        {
+          "command": "favorite-files.copyRelativePath",
           "when": "view == favorite-files-view && viewItem == file",
           "group": "navigation@1"
         },

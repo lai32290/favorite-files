@@ -154,6 +154,17 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage('Favorite renamed (alias updated)');
       }
     }),
+    vscode.commands.registerCommand('favorite-files.copyRelativePath', async (item: FavoriteItem) => {
+      if (item.contextValue === 'file' && item.resourceUri) {
+        try {
+          const relativePath = vscode.workspace.asRelativePath(item.resourceUri);
+          await vscode.env.clipboard.writeText(relativePath);
+          vscode.window.showInformationMessage(`Copied relative path: ${relativePath}`);
+        } catch (error) {
+          vscode.window.showErrorMessage(`Failed to copy relative path: ${error}`);
+        }
+      }
+    }),
     // Bookmark commands
     vscode.commands.registerCommand('favorite-files.addBookmark', async () => {
       const activeEditor = vscode.window.activeTextEditor;
