@@ -60,7 +60,13 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   const favoritesProvider = new FavoritesProvider(context.workspaceState);
-  vscode.window.registerTreeDataProvider('favorite-files-view', favoritesProvider);
+  // Create drag-and-drop controller (to be implemented in FavoritesProvider)
+  const dragAndDropController = favoritesProvider.getDragAndDropController?.();
+  const treeViewOptions: vscode.TreeViewOptions<FavoriteItem> = {
+    treeDataProvider: favoritesProvider,
+    dragAndDropController: dragAndDropController,
+  };
+  vscode.window.createTreeView('favorite-files-view', treeViewOptions);
 
   context.subscriptions.push(
     vscode.commands.registerCommand('favorite-files.add', async () => {

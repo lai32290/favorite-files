@@ -2,10 +2,63 @@ import * as vscode from 'vscode';
 import { Favorites, Bookmarks, Bookmark } from './types';
 
 export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteItem> {
+  private dragAndDropController: vscode.TreeDragAndDropController<FavoriteItem>;
+
+  constructor(private workspaceState: vscode.Memento) {
+    this.dragAndDropController = {
+      dragMimeTypes: ['application/vnd.favorite-file-path'],
+      dropMimeTypes: ['application/vnd.favorite-file-path'],
+      handleDrag: async (source, dataTransfer, token) => {
+        const fileItems = source.filter(item => item.contextValue === 'file' && item.resourceUri);
+        if (fileItems.length > 0) {
+          const filePath = fileItems[0].resourceUri!.fsPath;
+          const favorites = this.workspaceState.get<Favorites>('favorites', {});
+          const group = Object.keys(favorites).find(g => favorites[g].files.includes(filePath));
+          if (group) {
+            dataTransfer.set('application/vnd.favorite-file-path', new vscode.DataTransferItem(JSON.stringify({ filePath, group })));
+          }
+        }
+      },
+      handleDrop: async (target, dataTransfer, token) => {
+        if (!target || target.contextValue !== 'file' || !target.resourceUri) {
+          return;
+        }
+        const dropData = dataTransfer.get('application/vnd.favorite-file-path');
+        if (!dropData) {
+          return;
+        }
+        let parsed;
+        try {
+          parsed = JSON.parse(await dropData.asString());
+        } catch {
+          return;
+        }
+        const { filePath: draggedFilePath, group: draggedGroup } = parsed;
+        const targetFilePath = target.resourceUri.fsPath;
+        const favorites = this.workspaceState.get<Favorites>('favorites', {});
+        const targetGroup = Object.keys(favorites).find(g => favorites[g].files.includes(targetFilePath));
+        if (!targetGroup || targetGroup !== draggedGroup) {
+          return;
+        }
+        const files = favorites[targetGroup].files;
+        const draggedIdx = files.indexOf(draggedFilePath);
+        const targetIdx = files.indexOf(targetFilePath);
+        if (draggedIdx === -1 || targetIdx === -1 || draggedIdx === targetIdx) {
+          return;
+        }
+        files.splice(draggedIdx, 1);
+        files.splice(targetIdx, 0, draggedFilePath);
+        await this.workspaceState.update('favorites', favorites);
+        this.refresh();
+      },
+    };
+  }
+
+  getDragAndDropController() {
+    return this.dragAndDropController;
+  }
   private _onDidChangeTreeData: vscode.EventEmitter<FavoriteItem | undefined | null | void> = new vscode.EventEmitter<FavoriteItem | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<FavoriteItem | undefined | null | void> = this._onDidChangeTreeData.event;
-
-  constructor(private workspaceState: vscode.Memento) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
