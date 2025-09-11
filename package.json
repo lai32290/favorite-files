@@ -158,6 +158,12 @@
         "title": "Copy Relative Path",
         "icon": "$(copy)"
       }
+      ,
+      {
+        "command": "favorite-files.updateBookmarkPosition",
+        "title": "Update Bookmark Position",
+        "icon": "$(bookmark)"
+      }
     ],
     "menus": {
       "view/title": [
@@ -230,6 +236,11 @@
         },
         {
           "command": "favorite-files.renameBookmark",
+          "when": "view == favorite-files-view && viewItem == bookmark",
+          "group": "navigation"
+        },
+        {
+          "command": "favorite-files.updateBookmarkPosition",
           "when": "view == favorite-files-view && viewItem == bookmark",
           "group": "navigation"
         },
