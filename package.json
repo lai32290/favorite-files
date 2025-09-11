@@ -2,7 +2,7 @@
   "name": "favorite-files",
   "displayName": "Favorite Files",
   "description": "Favorite files and folders",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "lxuancheng",
   "repository": {
     "type": "git",
