@@ -315,6 +315,58 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
     }),
+    // Update bookmark position to current cursor line
+    vscode.commands.registerCommand('favorite-files.updateBookmarkPosition', async (item: FavoriteItem) => {
+      if (item.contextValue === 'bookmark' && item.filePath) {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (!activeEditor) {
+          vscode.window.showWarningMessage('No active editor available to get current cursor position');
+          return;
+        }
+
+        const currentFilePath = activeEditor.document.uri.fsPath;
+        const line = activeEditor.selection.active.line + 1; // 1-based
+
+        // If the active editor is not the same file, confirm with the user
+        if (currentFilePath !== item.filePath) {
+          const confirm = await vscode.window.showWarningMessage(
+            'Active editor file is different from the bookmark file. Update bookmark position anyway?',
+            { modal: true },
+            'Yes',
+            'No'
+          );
+          if (confirm !== 'Yes') {
+            return;
+          }
+        }
+
+        if (item.groupName) {
+          const favorites = context.workspaceState.get<Favorites>('favorites', {});
+          const groupData = favorites[item.groupName];
+          if (groupData) {
+            const bookmark = groupData.bookmarks.find(b => b.filePath === item.filePath && (b.description || `Line ${b.line}`) === item.label);
+            if (bookmark) {
+              bookmark.line = line;
+              bookmark.timestamp = Date.now();
+              await context.workspaceState.update('favorites', favorites);
+              favoritesProvider.refresh();
+              vscode.window.showInformationMessage(`Bookmark in group "${item.groupName}" updated to line ${line}`);
+            }
+          }
+        } else {
+          const bookmarks = context.workspaceState.get<Bookmarks>('bookmarks', {});
+          const fileBookmarks = bookmarks[item.filePath] || [];
+          const bookmark = fileBookmarks.find(b => (b.description || `Line ${b.line}`) === item.label);
+          if (bookmark) {
+            bookmark.line = line;
+            bookmark.timestamp = Date.now();
+            await context.workspaceState.update('bookmarks', bookmarks);
+            favoritesProvider.refresh();
+            vscode.window.showInformationMessage(`Bookmark updated to line ${line}`);
+          }
+        }
+      }
+    }),
     vscode.commands.registerCommand('favorite-files.clearBookmarks', async (item: FavoriteItem) => {
       if (item.contextValue === 'bookmark-file' && item.filePath) {
         const bookmarks = context.workspaceState.get<Bookmarks>('bookmarks', {});
